@@ -1,23 +1,41 @@
-import React, { useContext } from "react";
+import React, { useState, useContext } from "react";
 import { InterviewContext } from "../context/InterviewContext";
 
 export default function QuestionList() {
   const { questions, deleteQuestion, updateStatus } =
     useContext(InterviewContext);
 
+  const [searchTerm, setSearchTerm] = useState("");
+
+  const filteredQuestions = questions.filter((q) =>
+    q.title.toLowerCase().includes(searchTerm.toLowerCase())
+  );
+
   return (
     <div className="bg-white p-6 rounded-xl shadow-sm border border-gray-100 space-y-4">
-      <h3 className="text-lg font-semibold text-gray-800 border-b pb-2">
-        Questions List ({questions.length})
-      </h3>
+      <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between border-b pb-4 gap-3">
+        <h3 className="text-lg font-semibold text-gray-800">
+          Questions List ({filteredQuestions.length})
+        </h3>
 
-      {questions.length === 0 ? (
+        <div className="w-full sm:w-72">
+          <input
+            type="text"
+            placeholder="Search questions..."
+            value={searchTerm}
+            onChange={(e) => setSearchTerm(e.target.value)}
+            className="w-full px-4 py-2 text-sm border rounded-lg focus:outline-none focus:ring-2 focus:ring-indigo-500 bg-gray-50"
+          />
+        </div>
+      </div>
+
+      {filteredQuestions.length === 0 ? (
         <div className="text-center py-8 text-gray-400 text-sm">
-          No questions added yet. Start tracking your prep!
+          {searchTerm ? "No matching questions found." : "No questions added yet. Start tracking your prep!"}
         </div>
       ) : (
         <div className="space-y-3">
-          {questions.map((q) => (
+          {filteredQuestions.map((q) => (
             <div
               key={q.id}
               className="flex flex-col sm:flex-row items-start sm:items-center justify-between p-4 border rounded-lg hover:bg-gray-50 transition gap-2"
